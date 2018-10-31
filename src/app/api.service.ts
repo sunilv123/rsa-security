@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, retry } from 'rxjs/operators';
+import {environment} from '../environments/environment';
 
 
 @Injectable({
@@ -11,10 +12,30 @@ import { catchError, retry } from 'rxjs/operators';
 })
 export class ApiService {
 
-  constructor(private http : HttpClient) { }
+  httpHeaders = new HttpHeaders();
+  constructor(private http : HttpClient) {
+    this.httpHeaders = this.httpHeaders.set('X-Authorization', 'Bearer ').set('Content-Type', 'application/json');
+   }
+
+BASE_URL = environment.BASE_URL 
+public static URL = {
+  "handShake":'/api/security/handshake',
+  "login":"/api/security/login"
+}
 
   postSerice (url, data): Observable<any> {
-    return this.http.post<any>(url, data)
+    return this.http.post<any>(this.BASE_URL+url, data,
+      {
+        headers: this.httpHeaders
+      }
+    )
+      .pipe(
+        catchError(this.handleError) // then handle the error
+      );
+  }
+
+  getSerice (url): Observable<any> {
+    return this.http.get<any>(this.BASE_URL+url)
       .pipe(
         catchError(this.handleError) // then handle the error
       );
