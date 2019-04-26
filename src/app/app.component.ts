@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
     "password":""
   }
 
+  submitResponse:any;
 
   submitted = false;
 
@@ -110,9 +111,9 @@ export class AppComponent implements OnInit {
     .subscribe(data => {
      // console.log(data);
 
-      let response = this.decrypt(data.payLoad);
+      this.submitResponse = this.decrypt(data.payLoad);
 
-      console.log("response : "+response);
+      console.log("response : "+ this.submitResponse);
       
     });
 

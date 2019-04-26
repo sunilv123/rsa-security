@@ -19,7 +19,7 @@
 </ul> -->
 
 <div class="container">
-  <div [hidden]="submitted">
+  <div  *ngIf="! submitResponse">
     <h1>Hero Form</h1>
     <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
       <div class="form-group">
@@ -43,18 +43,11 @@
     </form>
   </div>
 
+{{submitResponse}}
+
+
  
 </div>
-
-<style>
-  .no-style .ng-valid {
-  border-left: 1px  solid #CCC
-}
-
-  .no-style .ng-invalid {
-  border-left: 1px  solid #CCC
-}
-</style>
 
 
 
