@@ -23,11 +23,12 @@ export class ApiService {
 
      getPublickey : '/get-public-key',
      saveLoginData:'/save-data',
+     saveAesInfo:'/save-aes-key',
 
   }
 
   postSerice (url, data): Observable<any> {
-    console.log("url: ", environment.backendUrl+url);
+   // console.log("url: ", environment.backendUrl+url);
     
     return this.http.post<any>(environment.backendUrl+url, data,
       {

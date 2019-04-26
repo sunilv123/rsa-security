@@ -13,8 +13,8 @@ export class AppComponent implements OnInit {
   title = 'app';
   //publicKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCr+Ne5MpDSi9mAkQCpQ6Rv2G6lnxSOobPBCw/ntdOAhClwZipFr2KITc+k1C7R0ATkZtgPJGt+TUc5zPhvqfD5szrgK9JZscYOqqQ9x278RTusl9PMDVxN0/vOE+wz8u7/A3YdOaG/2j/NriYdE0ufzDUVeEkDN8AGOP86blLsjwIDAQAB';
   publicKey:string;
-   key : 'u/Gu5posvwDsXUnV5Zaq4g==';
-   iv : '5D9r9ZVzEYYgha93/aUK2w==';
+   key = 'u/Gu5posvwDsXUnV5Zaq4g==';
+   iv = '5D9r9ZVzEYYgha93/aUK2w==';
   
 
   model:any={
@@ -71,7 +71,9 @@ export class AppComponent implements OnInit {
      CryptoJS.enc.Base64.parse(this.key), 
      { mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7, iv: CryptoJS.enc.Base64.parse(this.iv) }));
 
-    console.log("decryptedText :: ==== "+decryptedText);
+    //console.log("decryptedText :: ==== "+decryptedText);
+
+    return decryptedText;
  }
   encrypt(encryptedData){
 
@@ -88,7 +90,7 @@ export class AppComponent implements OnInit {
   onSubmit(){
     console.log(this.model)
        
-     let model = this.jsEncrypt.encrypt(JSON.stringify(this.model));
+     let model = this.encrypt(JSON.stringify(this.model));
 
 
 //var text = "This is another msg!";
@@ -106,7 +108,12 @@ export class AppComponent implements OnInit {
 
     this.apiService.postSerice(ApiService.apiList.saveLoginData, data)
     .subscribe(data => {
-      console.log(data);
+     // console.log(data);
+
+      let response = this.decrypt(data.payLoad);
+
+      console.log("response : "+response);
+      
     });
 
   }
@@ -118,8 +125,10 @@ export class AppComponent implements OnInit {
    
     this.apiService.getSerice(ApiService.apiList.getPublickey)
     .subscribe(data => {
-      console.log(data);
+    //  console.log(data);
       this.publicKey = data.payLoad.publicKey;
+      //console.log("publicKey : "+this.publicKey);
+      
       this.jsEncrypt.setPublicKey(this.publicKey);
 
       //send AES info data
@@ -136,9 +145,14 @@ sendAeKey()
     "IV":this.iv
   }
 
-  this.apiService.postSerice(ApiService.apiList.saveLoginData, data)
+  let payload = {
+    "payLoad" : this.jsEncrypt.encrypt(JSON.stringify(data))
+  }
+  
+
+  this.apiService.postSerice(ApiService.apiList.saveAesInfo, payload)
     .subscribe(data => {
-      console.log(data);
+     // console.log(data);
     });
   
 }
