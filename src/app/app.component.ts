@@ -78,13 +78,48 @@ export class AppComponent implements OnInit {
  }
   encrypt(encryptedData){
 
-    let plainText = CryptoJS.AES.encrypt(encryptedData, 
-      CryptoJS.enc.Base64.parse(this.key), { mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7,
-       iv: CryptoJS.enc.Base64.parse(this.iv)  }).toString();
+
+    // var salt = CryptoJS.lib.WordArray.random(128/8);
+    // var pass = "test1"; 
+    // var iv  = CryptoJS.enc.Base64.stringify(CryptoJS.lib.WordArray.random(16));
+    // var key  = CryptoJS.enc.Base64.stringify(CryptoJS.PBKDF2(pass, salt, { keySize: 128/8, iterations: 1 }));     
+  
+    // console.log(iv);
+    // console.log(key);
+    
+    
+    // let plainText = CryptoJS.AES.encrypt(encryptedData, 
+    //   CryptoJS.enc.Base64.parse(this.key), { mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7,
+    //    iv: CryptoJS.enc.Base64.parse(this.iv)  }).toString();
+
+       var text = "The quick brown fox jumps over the lazy dog. 👻 👻";
+       var secret = "René Über";
+       var encrypted = CryptoJS.AES.encrypt(text, secret);
+       encrypted = encrypted.toString();
+       console.log("Cipher text: " + encrypted);
+
+       let decryptedText =  CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(
+       encrypted ,secret));
+
+      let length =  5;
+      let  charSet = 'PICKCHARSFROMTHISSET';
+
+       charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+       var randomString = '';
+       for (var i = 0; i < length; i++) {
+           var randomPoz = Math.floor(Math.random() * charSet.length);
+           randomString += charSet.substring(randomPoz,randomPoz+1);
+       }
+        randomString;
+
+       console.log("random : "+randomString);
+       
+       console.log("Plain text: " + decryptedText);
+   
 
     console.log(encryptedData.toString());
 
-    return plainText;
+    return encrypted;
  
   }
 
