@@ -57,7 +57,20 @@ export class AppComponent implements OnInit {
   ngOnInit() {
 
     this.jsEncrypt = new JsEncryptModule.JSEncrypt();
-   this.getPublicKey();
+
+    var iv = CryptoJS.lib.WordArray.random(128/8).toString(CryptoJS.enc.Hex);
+    var salt = CryptoJS.lib.WordArray.random(128/8).toString(CryptoJS.enc.Hex);
+  
+    var ciphertext = this.encrypt1(salt, iv, '1234567891234567', "Sthis is Sunil Kumar Verma");
+
+    var aesPassword = (iv + "<<<iv::" + salt + "<<<salt:: cipher>>>>" + ciphertext);
+     console.log(aesPassword);
+
+
+   let decryptedData =   this.decrypt1(salt, iv, '1234567891234567', "Sthis is Sunil Kumar Verma");
+   console.log(decryptedData);
+     
+  // this.getPublicKey();
 
   }
 
@@ -99,7 +112,7 @@ export class AppComponent implements OnInit {
        console.log("Cipher text: " + encrypted);
 
        let decryptedText =  CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(
-       encrypted ,secret));
+       'INjbtYx/kRhobDSPDxfEvLThHZRGbV38mrGFjnPxW/KjBXm85uO0R5qA+F3/i4Tyjt36lbguMtJuWar2UeH7wg==' ,secret));
 
       let length =  5;
       let  charSet = 'PICKCHARSFROMTHISSET';
@@ -192,5 +205,42 @@ sendAeKey()
     });
   
 }
+
+//The set method is use for encrypt the value.
+keySize = 128 / 32;
+iterationCount = 1000;
+
+generateKey(salt, passPhrase) {
+  var key = CryptoJS.PBKDF2(
+      passPhrase, 
+      CryptoJS.enc.Hex.parse(salt),
+      { keySize: this.keySize, iterations: this.iterationCount });
+  return key;
+}
+
+encrypt1(salt, iv, passPhrase, plainText) {
+  var key = this.generateKey(salt, passPhrase);
+  var encrypted = CryptoJS.AES.encrypt(
+      plainText,
+      key,
+      { iv: CryptoJS.enc.Hex.parse(iv) });
+  return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+}
+
+decrypt1(salt, iv, passPhrase, cipherText) {
+
+  var key = this.generateKey("b3dd20e6b6e5bd6d6014472470d1310a", "1234567891234567");
+  var cipherParams = CryptoJS.lib.CipherParams.create({
+    ciphertext: CryptoJS.enc.Base64.parse("DHJ4TljjkcsX9ATb98cT39LbvNz5gCDZ7S9FF0h/fWw=")
+  });
+  var decrypted = CryptoJS.AES.decrypt(
+      cipherParams,
+      key,
+      { iv: CryptoJS.enc.Hex.parse("62b30aceaf8aae1abb4bdea4a6995922") });
+  return decrypted.toString(CryptoJS.enc.Utf8);
+
+
+}
+
 
 }
